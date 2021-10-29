@@ -4,7 +4,7 @@ import (
 	"os"
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/go-plugins-helpers/volume"
-	"github.com/wetopi/docker-volume-rbd/lib"
+	"github.com/victor-mendoza/docker-volume-rbd/lib"
 )
 
 const socketAddress = "/run/docker/plugins/rbd.sock"

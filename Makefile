@@ -1,5 +1,6 @@
-PLUGIN_NAME=wetopi/rbd
+PLUGIN_NAME=ceph-rbd
 PLUGIN_VERSION=3.0.1
+GITHUB_ACCOUNT=victor-mendoza
 
 all: clean rootfs create
 
@@ -59,4 +60,4 @@ dev:
 	@echo "### docker build: dev image with golang deps"
 	@docker build -q -t ${PLUGIN_NAME}:dev --target go-builder .
 	@echo "### launching interactive shell"
-	@docker run --rm -it -v ${PWD}:/go/src/github.com/wetopi/docker-volume-rbd ${PLUGIN_NAME}:dev bash
+	@docker run --rm -it -v ${PWD}:/go/src/github.com/${GITHUB_ACCOUNT}/docker-volume-rbd ${PLUGIN_NAME}:dev bash

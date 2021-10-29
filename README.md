@@ -34,8 +34,8 @@ MOUNT_OPTIONS="--options=noatime"
 ### 2 - Install the plugin
 
 ```bash
-docker plugin install wetopi/rbd \
-  --alias=wetopi/rbd \
+docker plugin install ceph-rbd \
+  --alias=ceph-rbd \
   LOG_LEVEL=1 \
   RBD_CONF_POOL="ssd" \
   RBD_CONF_CLUSTER=ceph \
@@ -59,26 +59,23 @@ order: optional, defaults to 22 (4KB Objects)
 [https://docs.docker.com/engine/reference/commandline/volume_create/](https://docs.docker.com/engine/reference/commandline/volume_create/)
 
 ```sh
-docker volume create -d wetopi/rbd -o size=206 my_rbd_volume
+docker volume create -d ceph-rbd -o size=206 my_rbd_volume
 
 docker volume ls
 DRIVER              VOLUME NAME
-local               069d59c79366294d07b9102dde97807aeaae49dc26bb9b79dd5b983f7041d069
-local               11db1fa5ba70752101be90a80ee48f0282a22a3c8020c1042219ed1ed5cb0557
-local               2d1f2a8fac147b7e7a6b95ca227eba2ff859325210c7280ccb73fd5beda6e67a
-wetopi/rbd          my_rbd_volume
+ceph-rbd          my_rbd_volume
 ```
 
 #### 3.B - Run a container with a previously created volume:
 
 ```bash
-docker run -it -v my_rbd_volume:/data --volume-driver=wetopi/rbd busybox sh
+docker run -it -v my_rbd_volume:/data --volume-driver=ceph-rbd busybox sh
 ```
 
 #### 3.C - Run a container with an anonymous volume:
 
 ```bash
-docker run -it -v $(docker volume create -d wetopi/rbd -o size=206):/data --volume-driver=wetopi/rbd -o size=206 busybox sh
+docker run -it -v $(docker volume create -d ceph-rbd -o size=206):/data --volume-driver=ceph-rbd -o size=206 busybox sh
 ```
 *NOTE: Docker 1.13.1 does not support volume opts on docker run or docker create*
 
@@ -86,7 +83,7 @@ docker run -it -v $(docker volume create -d wetopi/rbd -o size=206):/data --volu
 
 ```bash
  docker service create --replicas=1 \
-   --mount type=volume,source=my_rbd_volume,destination=/var/lib/mysql,volume-driver=wetopi/rbd \
+   --mount type=volume,source=my_rbd_volume,destination=/var/lib/mysql,volume-driver=ceph-rbd \
    mariadb:latest
 ```
 
@@ -95,7 +92,7 @@ docker run -it -v $(docker volume create -d wetopi/rbd -o size=206):/data --volu
 ```bash
  docker service create --replicas=1 \
    -e MYSQL_ROOT_PASSWORD=my-secret-pw \
-   --mount type=volume,destination=/var/lib/mysql,volume-driver=wetopi/rbd,volume-opt=size=512 \
+   --mount type=volume,destination=/var/lib/mysql,volume-driver=ceph-rbd,volume-opt=size=512 \
    mariadb:latest
 ```
 
@@ -106,13 +103,13 @@ docker run -it -v $(docker volume create -d wetopi/rbd -o size=206):/data --volu
 
 
 ```bash
-docker plugin disable -f wetopi/rbd
-docker plugin upgrade wetopi/rbd
+docker plugin disable -f ceph-rbd
+docker plugin upgrade ceph-rbd
 ```
 
 Update setting [Optional]:
 ```bash
-docker plugin set wetopi/rbd \
+docker plugin set ceph-rbd \
   LOG_LEVEL=2 \
   RBD_CONF_POOL="ssd" \
   RBD_CONF_KEYRING_USER=client.admin
@@ -120,7 +117,7 @@ docker plugin set wetopi/rbd \
 
 Enable the plugin:
 ```bash
-docker plugin enable wetopi/rbd
+docker plugin enable ceph-rbd
 ```
 
 
@@ -139,7 +136,7 @@ docker plugin enable wetopi/rbd
 docker plugin ls
 
 ID                  NAME                DESCRIPTION               ENABLED
-fff19fa9a622        wetopi/rbd:latest   RBD plugin for Docker     true
+fff19fa9a622        ceph-rbd:latest     RBD plugin for Docker     true
 ```
 
 ### Exec an interactive bash in plugins container:
