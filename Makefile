@@ -1,5 +1,5 @@
 PLUGIN_NAME=ceph-rbd
-PLUGIN_VERSION=3.0.1
+PLUGIN_VERSION=4.0.0
 GITHUB_ACCOUNT=victor-mendoza
 
 all: clean rootfs create
