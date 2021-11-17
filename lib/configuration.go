@@ -11,7 +11,6 @@ func (d *rbdDriver) configure() {
     // set default confs:
     d.conf["pool"] = "tbd"
     d.conf["cluster"] = "ceph"
-    d.conf["device_map_root"] = "/dev/rbd"
     d.loadEnvironmentRbdConfigVars();
 }
 

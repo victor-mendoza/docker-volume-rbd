@@ -2,12 +2,21 @@ package dockerVolumeRbd
 
 import (
     "encoding/json"
+    "errors"
+    "fmt"
     "github.com/sirupsen/logrus"
     "github.com/ceph/go-ceph/rbd"
     "golang.org/x/sys/unix"
-    "path/filepath"
-    "fmt"
 )
+
+type Mapping struct {
+    Id string
+    Pool string
+    Namespace string
+    Name string
+    Snap string
+    Device string
+}
 
 
 func (d *rbdDriver) mapImage(imageName string) error {
@@ -40,14 +49,19 @@ func (d *rbdDriver) unmapImage(imageName string) error {
 
 func (d *rbdDriver) mountImage(imageName string, mountOptions string) error {
 
-    device := d.getTheDevice(imageName)
+    // get device name
+    device, err := d.getTheDevice(imageName)
+    if err != nil {
+        return err
+    }
+
     mountpoint := d.GetMountPointPath(imageName)
 
     logrus.Debugf("volume-rbd Name=%s Message=mount %s %s %s", imageName, mountOptions, device, mountpoint)
 
-    // err := unix.Mount(device, mountpoint, "auto", 0, "")
+    // err = unix.Mount(device, mountpoint, "auto", 0, "")
     // note unix.Mount does not work with our aliased device, we user the sh version.
-    _, err := shWithDefaultTimeout("mount", mountOptions, device, mountpoint)
+    _, err = shWithDefaultTimeout("mount", mountOptions, device, mountpoint)
 
     return err
 }
@@ -97,7 +111,18 @@ func (d *rbdDriver) rbdsh(command string, args ...string) (string, error) {
 }
 
 
-// returns the aliased device under device_map_root
-func (d *rbdDriver) getTheDevice(imageName string) string {
-    return filepath.Join(d.conf["device_map_root"], d.conf["pool"], imageName)
+// returns the device path
+func (d *rbdDriver) getTheDevice(imageName string) (string, error) {
+    var mapped []Mapping
+    status, err := shWithDefaultTimeout("rbd", "--format", "json", "showmapped")
+    if err != nil {
+        return "", err
+    }
+    json.Unmarshal([]byte(status), &mapped)
+    for _, m := range mapped {
+        if m.Name == imageName {
+            return m.Device, nil
+        }
+    }
+    return "", errors.New("Image not found")
 }

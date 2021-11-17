@@ -1,6 +1,5 @@
 PLUGIN_NAME=ceph-rbd
 PLUGIN_VERSION=4.0.0
-GITHUB_ACCOUNT=victor-mendoza
 
 all: clean rootfs create
 
@@ -60,4 +59,4 @@ dev:
 	@echo "### docker build: dev image with golang deps"
 	@docker build -q -t ${PLUGIN_NAME}:dev --target go-builder .
 	@echo "### launching interactive shell"
-	@docker run --rm -it -v ${PWD}:/go/src/github.com/${GITHUB_ACCOUNT}/docker-volume-rbd ${PLUGIN_NAME}:dev bash
+	@docker run --rm -it -v ${PWD}:/go/src/docker-volume-rbd ${PLUGIN_NAME}:dev bash

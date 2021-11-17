@@ -176,9 +176,12 @@ curl -H "Content-Type: application/json" -XPOST -d '{}' --unix-socket /var/run/d
 
 ## Changelog
 
+### v4.0.0
+mod: Switched base image to quay.io/ceph/ceph
+mod: query mapped device path instead of relying on aliases
+
 ### v3.0.1
 mod: Added CAP_NET_ADMIN to capabilities to let the driver create volumes in Ubuntu 20.04.2 and new kernels.
-
 
 ### v3.0.0
 new: Support for Ceph Nautilus
@@ -188,7 +191,6 @@ This also cleans up the Dockerfile(s) a bit to make this easier to update in the
 
 ### v2.0.1
 fix: pass the cluster name to rbd invocations
-
 
 ### v2.0.0
 new: mkfs now with options: mkfsOptions with default "-O mmp"
@@ -200,7 +202,6 @@ With the introduction of ext4 "Multiple Mount Protection" we can deal with the m
 The usage of Watchers carries complex corner cases i.e. when after a crash ceph takes too much time blacklist osd nodes.
 
 ### v1.0.1
-
 
 ### v1.0.0
 New:
@@ -228,7 +229,6 @@ vendor dir is maintained using dep dependency tool: https://github.com/golang/de
 More info: https://github.com/golang/dep/blob/master/FAQ.md
 
 #### Update dependencies
-
 
 More info: https://golang.github.io/dep/docs/daily-dep.html
 

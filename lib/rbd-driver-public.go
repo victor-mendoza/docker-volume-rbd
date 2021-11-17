@@ -4,7 +4,7 @@ import (
     "github.com/sirupsen/logrus"
     "github.com/ceph/go-ceph/rados"
     "github.com/ceph/go-ceph/rbd"
-    "github.com/victor-mendoza/docker-volume-rbd/lib/try"
+    "docker-volume-rbd/lib/try"
     "sync"
     "path/filepath"
     "fmt"
@@ -154,8 +154,15 @@ func (d *rbdDriver) CreateRbdImage(imageName string, size uint64, order int, fst
         return err
     }
 
+    // get device
+    device, err := d.getTheDevice(imageName)
+    if err != nil {
+        d.unmapImage(imageName)
+        defer d.removeRbdImage(imageName)
+        return err
+    }
+
     // make the filesystem (give it some time)
-    device := d.getTheDevice(imageName)
     _, err = shWithTimeout(5 * time.Minute, mkfs, mkfsOptions, device)
     if err != nil {
         d.unmapImage(imageName)
