@@ -1,6 +1,6 @@
-# Docker volume plugin for RBD
+# Docker volume plugin for Ceph/RBD
 
-Docker Engine managed plugin to for RBD volumes.
+Docker Engine managed plugin to for Ceph/RBD volumes.
 
 This plugins is managed using Docker Engine plugin system.
 [https://docs.docker.com/engine/extend/](https://docs.docker.com/engine/extend/)
@@ -50,7 +50,7 @@ docker plugin install ceph-rbd \
 fstype: optional, defauls to ext4
 mkfsOptions: optional, defaults to '-O mmp' (Multiple Mount Protection)
 mountOptions: optional, defaults to '--options=noatime'
-size: optional, defaults to 512 (512MB)
+size: optional, in MiB, defaults to 512 (512MiB)
 order: optional, defaults to 22 (4KB Objects)
 ```
 
@@ -136,7 +136,7 @@ docker plugin enable ceph-rbd
 docker plugin ls
 
 ID                  NAME                DESCRIPTION               ENABLED
-fff19fa9a622        ceph-rbd:latest     RBD plugin for Docker     true
+fff19fa9a622        ceph-rbd:latest     Ceph/RBD plugin           true
 ```
 
 ### Exec an interactive bash in plugins container:
@@ -178,6 +178,7 @@ curl -H "Content-Type: application/json" -XPOST -d '{}' --unix-socket /var/run/d
 
 ### v4.0.0
 mod: Switched base image to quay.io/ceph/ceph
+
 mod: query mapped device path instead of relying on aliases
 
 ### v3.0.1
@@ -187,6 +188,7 @@ mod: Added CAP_NET_ADMIN to capabilities to let the driver create volumes in Ubu
 new: Support for Ceph Nautilus
 
 Ceph 14.x, Nautilus, has many new features but notably some differences in its configuration format due to the v2 Messenger interface. This adds support for Ceph Nautilus, mostly by updating Golang dependencies but also by ensuring more recent Ceph binaries are included in the container.
+
 This also cleans up the Dockerfile(s) a bit to make this easier to update in the future.
 
 ### v2.0.1
@@ -194,11 +196,13 @@ fix: pass the cluster name to rbd invocations
 
 ### v2.0.0
 new: mkfs now with options: mkfsOptions with default "-O mmp"
+
 new: mount now with options: default mountOptions "--options=noatime"
+
 mod: rbd watchers do not stop the image mount.
 
-No more volume lock control neded:
-With the introduction of ext4 "Multiple Mount Protection" we can deal with the multi mounts in a more rational way (https://ext4.wiki.kernel.org/index.php/Ext4_Disk_Layout#Multiple_Mount_Protection).
+No more volume lock control neded: with the introduction of ext4 "Multiple Mount Protection" we can deal with the multi mounts in a more rational way (https://ext4.wiki.kernel.org/index.php/Ext4_Disk_Layout#Multiple_Mount_Protection).
+
 The usage of Watchers carries complex corner cases i.e. when after a crash ceph takes too much time blacklist osd nodes.
 
 ### v1.0.1
@@ -221,16 +225,6 @@ You can build and publish the plugin with:
 ```bash
 make all
 ```
-
-### Vendor dependencies
-
-vendor dir is maintained using dep dependency tool: https://github.com/golang/dep
-
-More info: https://github.com/golang/dep/blob/master/FAQ.md
-
-#### Update dependencies
-
-More info: https://golang.github.io/dep/docs/daily-dep.html
 
 ## THANKS
 
